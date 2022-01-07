@@ -41,4 +41,5 @@ Server.middleware.register([
 |
 */
 Server.middleware.registerNamed({
+  text: () => import('App/Middleware/TextMiddleware')
 })
