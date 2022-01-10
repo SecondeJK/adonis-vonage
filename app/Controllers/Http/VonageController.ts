@@ -8,9 +8,11 @@ export default class VonageController {
 
         let response = await this.sendText(text)
 
+        // console.log(response);
+
         return View.render('vonage_view', {
             textData: text,
-            responseData: response
+            responseData: await this.sendText(text)
         })
     }
 
@@ -25,24 +27,18 @@ export default class VonageController {
           "type": "unicode"
         }
 
-        let apiResponse = "test test test";
-
-        await vonage.message.sendSms("447451284518", "447738066610", text, opts, (err, responseData) => {
-            if (err) {
-                apiResponse = 'Error'
-                // console.log('Error!')
-            } else {
-                if (responseData.messages[0]['status'] === "0") {
-                    // console.log(responseData)
-                    // console.log('Message Sent')
-                    apiResponse = 'Message Sent'
+        return new Promise((resolve, reject) => { 
+            vonage.message.sendSms("447451284518", "447738066610", text, opts, (err, responseData) => {
+                if (err) {
+                    resolve('Error')
                 } else {
-                    // console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-                    apiResponse = `Message failed with error: ${responseData.messages[0]['error-text']}`;
+                    if (responseData.messages[0]['status'] === "0") {
+                        resolve('Message Sent')
+                    } else {
+                        resolve(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+                    }
                 }
-            }
+            })
         })
-
-        return apiResponse
     }
 }
